@@ -21,7 +21,7 @@ def train_model(direction="en-id"):
     model = MarianMTModel.from_pretrained(model_name)
 
     # Prepare dataset
-    dataset = Dataset.from_pandas(df.head(2000))
+    dataset = Dataset.from_pandas(df)
 
     def preprocess(examples):
         inputs = tokenizer(examples[source_col], padding="max_length", truncation=True, max_length=128)
@@ -36,12 +36,13 @@ def train_model(direction="en-id"):
     training_args = Seq2SeqTrainingArguments(
         output_dir=f"./model_{direction}",
         eval_strategy="epoch",
-        per_device_train_batch_size=4,
-        per_device_eval_batch_size=4,
-        num_train_epochs=2,
+        per_device_train_batch_size=8,
+        per_device_eval_batch_size=8,
+        num_train_epochs=3,
         save_total_limit=1,
         predict_with_generate=True,
         logging_steps=50,
+        fp16=True
     )
 
     # Trainer
